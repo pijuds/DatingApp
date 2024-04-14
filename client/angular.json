@@ -93,10 +93,13 @@
               "src/assets"
             ],
             "styles": [
+
               "node_modules/ngx-bootstrap/datepicker/bs-datepicker.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.min.scss",             
+              "node_modules/bootstrap/dist/css/bootstrap.min.scss",
+              "node_modules/bootswatch/dist/united/bootstrap.css",            
               "node_modules/font-awesome/css/font-awesome.min.scss",
-              "src/styles.scss"
+              "node_modules/ngx-toastr/toastr.scss",
+              "styles.scss"
             ],
             "scripts": []
           }
