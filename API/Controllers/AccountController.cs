@@ -77,11 +77,11 @@ namespace API.Controllers
     
 
     return new UserDto
-            {
-                Username=user.UserName,
-                token=_tokenService.CreateToken(user)
+    {
+      Username=user.UserName,
+      token=_tokenService.CreateToken(user)
 
-            };
+    };
 }
 
         private async Task<bool> UserExists(string username)
