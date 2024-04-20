@@ -42,4 +42,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using var scope=app.Services.CreateScope();
+var services=scope.ServiceProvider;
+try
+{
+  var context=services.GetRequiredService<DataContext>();
+
+  await context.Database.MigrateAsync();
+
+  await Seed.SeedUser(context);
+}
+catch(Exception ex)
+{
+  var logger=services.GetServices<ILogger<Program>>();
+  
+  
+}
 app.Run();
