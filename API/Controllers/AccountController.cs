@@ -30,7 +30,7 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
-            if(await UserExists(registerDto.Username))
+            if(await UserExists(registerDto.UserName))
             {
                 return BadRequest("Username is taken");
             }
@@ -43,7 +43,7 @@ namespace API.Controllers
 
             using var hmac=new HMACSHA512();
             
-                user.UserName=registerDto.Username.ToLower();
+                user.UserName=registerDto.UserName.ToLower();
                 user.PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
                 user.PasswordSalt=hmac.Key;
             
@@ -52,10 +52,11 @@ namespace API.Controllers
 
             return new UserDto
             {
-                Username=user.UserName,
+                UserName=user.UserName,
                 token=_tokenService.CreateToken(user),
                 KnownAs=user.KnownAs,
-                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
+                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
+                Gender=user.Gender
 
             };
 
@@ -92,10 +93,11 @@ namespace API.Controllers
 
     return new UserDto
     {
-      Username=user.UserName,
+      UserName=user.UserName,
       token=_tokenService.CreateToken(user),
       PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
-      KnownAs=user.KnownAs
+      KnownAs=user.KnownAs,
+      Gender=user.Gender
 
 
     };
