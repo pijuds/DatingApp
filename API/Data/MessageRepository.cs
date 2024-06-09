@@ -40,9 +40,9 @@ public class MessageRepository : IMessageRepository
 
         query=messageParams.Container switch
         {
-           "Inbox" => query.Where(u=>u.RecipientUsername==messageParams.Username),
-           "Outcox"=>query.Where(u=>u.SenderUsername==messageParams.Username) ,
-           _=>query.Where(u=>u.RecipientUsername ==messageParams.Username && u.DateRead==null)
+           "Inbox" => query.Where(u=>u.RecipientUsername==messageParams.Username && u.RecipientDeleted==false),
+           "Outbox"=>query.Where(u=>u.SenderUsername==messageParams.Username && u.SenderDeleted==false) ,
+           _=>query.Where(u=>u.RecipientUsername ==messageParams.Username && u.RecipientDeleted==false && u.DateRead==null)
         };
 
         var messages=query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
@@ -57,10 +57,12 @@ public class MessageRepository : IMessageRepository
         .Include(u=>u.Recipient).ThenInclude(p=>p.Photos)
         .Where(
             m=>m.RecipientUsername==currentUserName && 
+            m.RecipientDeleted==false &&
             m.SenderUsername==recipientUsername ||
             m.RecipientUsername==recipientUsername && 
+            m.SenderDeleted==false &&
             m.SenderUsername==currentUserName
-        ).OrderByDescending(m=>m.MessageSent).ToListAsync();
+        ).OrderBy(m=>m.MessageSent).ToListAsync();
 
         var unreadMessage=messages.Where(m=>m.DateRead==null && m.RecipientUsername==currentUserName)
         .ToList();
