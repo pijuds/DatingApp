@@ -22,16 +22,33 @@ public class Seed
         var users = JsonSerializer.Deserialize<List<AppUser>>(userData, options);
 
         var roles = new List<AppRole>
-            {
-                new AppRole{Name = "Member"},
-                new AppRole{Name = "Admin"},
-                new AppRole{Name = "Moderator"},
-            };
+    {
+        new AppRole { Name = "Member" },
+        new AppRole { Name = "Admin" },
+        new AppRole { Name = "Moderator" }
+    };
 
-        foreach (var role in roles)
+    foreach (var role in roles)
+    {
+        var roleExists = await roleManager.RoleExistsAsync(role.Name);
+        if (!roleExists)
         {
-            await roleManager.CreateAsync(role);
+            var result = await roleManager.CreateAsync(role);
+            if (!result.Succeeded)
+            {
+                // Handle the errors
+                Console.WriteLine($"Failed to create role {role.Name}");
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine(error.Description);
+                }
+            }
         }
+        else
+        {
+            Console.WriteLine($"Role {role.Name} already exists.");
+        }
+    }
 
         foreach (var user in users)
         {

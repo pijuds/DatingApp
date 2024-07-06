@@ -53,10 +53,11 @@ namespace API.Controllers
 
             if(!roleResult.Succeeded) return BadRequest(result.Errors);
 
+            var token = await _tokenService.CreateToken(user);
             return new UserDto
             {
                 UserName=user.UserName,
-                token= _tokenService.CreateToken(user),
+                token= token,
                 KnownAs=user.KnownAs,
                 PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
                 Gender=user.Gender
@@ -81,6 +82,10 @@ namespace API.Controllers
            if (!result) return Unauthorized();
 
 
+           var token = await _tokenService.CreateToken(user);
+
+
+
       
     // Clearing sensitive information before returning
     
@@ -88,7 +93,7 @@ namespace API.Controllers
     return new UserDto
     {
       UserName=user.UserName,
-      token=_tokenService.CreateToken(user),
+      token=token,
       PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
       KnownAs=user.KnownAs,
       Gender=user.Gender
