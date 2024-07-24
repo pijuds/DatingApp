@@ -2,6 +2,8 @@ using API.Data;
 using API.Helpers;
 using API.Interfaces;
 using API.Services;
+using API.SignalR;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
 using Services.API;
 
@@ -25,7 +27,7 @@ namespace API.Extensions
              Services.AddScoped<ILikesRepository,LikesRepository>();
              Services.AddScoped<IMessageRepository,MessageRepository>();
              Services.AddSignalR();
-             
+             Services.AddSingleton<PresenceTracker>();            
              return Services;
         }
     }

@@ -1,45 +1,71 @@
 import { Injectable, inject } from '@angular/core';
-import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
+import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../_models/user';
+import { BehaviorSubject, take } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PresenceService {
 
-  hubUrl = 'https://localhost:50001/hubs/';
+  hubUrl = 'https://localhost:5001/hubs/';
   private hubConnection?: HubConnection;
-  private toastr=inject(ToastrService);
+ 
+  private toastr = inject(ToastrService);
+  private onlinesUseSource=new BehaviorSubject<string[]>([]);
+  onlineUsers$ = this.onlinesUseSource.asObservable();
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   createHubConnection(user: User) {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'presence', {
-        accessTokenFactory: () => user.token
+        accessTokenFactory: () => user.token,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets
       })
       .withAutomaticReconnect()
       .build();
 
-      this.hubConnection
+    this.hubConnection
       .start()
-      .catch(error => console.log(error));
+      .catch(error => console.log('Error while starting connection: ' + error));
 
     this.hubConnection.on('UserIsOnline', username => {
-      this.toastr.info(user +"is connected")
-      
+      this.onlineUsers$.pipe(take(1)).subscribe({
+        next: usernames => this.onlinesUseSource.next([...usernames, username])
       })
+    });
 
-      this.hubConnection.on('UserIsOffline', username => {
-        this.toastr.info(user +"is not connected")
+    this.hubConnection.on('UserIsOffline', username => {
+      this.onlineUsers$.pipe(take(1)).subscribe({
+        next: usernames => this.onlinesUseSource.next([...usernames.filter(x => x !== username)])
       })
-    }
-
-    stopHubConnection() {
-      if(this.hubConnection?.state===HubConnectionState.Connected)
-      {
-           this.hubConnection?.stop().catch(error => console.log(error));
+    });
+    this.hubConnection.on('GetOnlineUsers', usernames => {
+      try {
+        this.onlinesUseSource.next(usernames);
+        console.log('usernames', usernames);
+      } catch (error) {
+        console.error('Error handling GetOnlineUsers event:', error);
       }
+    });
+
+    this.hubConnection.on('NewMessageReceived',({username,knownAs})=>{
+      console.log("known as",knownAs);
+      this.toastr.info(`${knownAs} has sent you new Message ! click me to see it`)
+      
+        .onTap
+        .pipe(take(1))
+        .subscribe(() => this.router.navigateByUrl('/members/' + username + '?tab=Messages'))
+    })
+  }
+
+  stopHubConnection() {
+    if (this.hubConnection?.state === HubConnectionState.Connected) {
+      this.hubConnection?.stop().catch(error => console.log('Error while stopping connection: ' + error));
     }
+  }
 }
