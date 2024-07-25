@@ -6,6 +6,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSt
 import { BehaviorSubject, take } from 'rxjs';
 import { User } from '../_models/user';
 import { ToastrService } from 'ngx-toastr';
+import { Group } from '../_models/group';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,25 @@ export class MessageService {
 
       this.hubConnection.on('ReceiveMessageThread', messages => {
         this.messageThreadSouce.next(messages);
+      })
+
+      this.hubConnection.on('UpdateGroup', (group:Group) => {
+        if(group.connections.some(x=>x.username===otherUsername))
+        {
+          this.messageThread$.pipe(take(1)).subscribe({
+            next:messages=>{
+              messages.forEach(message=>{
+                if(!message.dateRead)
+                {
+                  message.dateRead=new Date(Date.now());
+                }
+              })
+              this.messageThreadSouce.next([...messages]);
+
+            }
+          })
+        }
+        ;
       })
 
       this.hubConnection.on('NewMessage', message => {
