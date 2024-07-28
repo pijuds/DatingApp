@@ -1,3 +1,4 @@
+import { ChangeDetectionStrategy } from '@angular/compiler';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Message } from 'src/app/_models/message';
@@ -9,6 +10,7 @@ import { MessageService } from 'src/app/_services/message.service';
   styleUrls: ['./members-messages.component.scss']
 })
 export class MembersMessagesComponent implements OnInit {
+  changeDetection:ChangeDetectionStrategy.OnPush | undefined;
   @Input() username?:string;
  // @Input() messages :Message[]=[];
   messageContent='';

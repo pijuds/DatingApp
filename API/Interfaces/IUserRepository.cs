@@ -9,7 +9,7 @@ public interface IUserRepositoty
 {
     void Update(AppUser user);
 
-    Task<bool> SaveAllAsync();
+  //  Task<bool> SaveAllAsync();
 
     Task<IEnumerable<AppUser>> GetUserAsync();
 
@@ -19,4 +19,7 @@ public interface IUserRepositoty
 
     Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams);
     Task<MemberDto> GetMemberAsync(string username);
+
+    Task<string> GetUserGender(string username);
+    
 }
