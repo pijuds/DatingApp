@@ -62,7 +62,9 @@ public class UsersController:BaseApiController
     //    var userToReturn=_mapper.Map<MemberDto>(user);
 
     //    return Ok(userToReturn);
-       return await _uow.UserRepository.GetMemberAsync(username);
+       var currentUsername = User.GetUserName();
+ return await _uow.UserRepository.GetMemberAsync(username,
+ isCurrentUser: currentUsername == username);
     }
 
     [HttpPut]
@@ -95,7 +97,7 @@ public class UsersController:BaseApiController
             PublicId = result.PublicId
         };
 
-        if (user.Photos.Count == 0) photo.IsMain = true;
+        //if (user.Photos.Count == 0) photo.IsMain = true;
 
         user.Photos.Add(photo);
 

@@ -6,7 +6,7 @@ public interface IuintofWork
     IMessageRepository MessageRepository{get;}
 
     ILikesRepository LikeRepository{get;}
-
+    IPhotoRepository PhotoRepository { get; }
     Task<bool> Complete();
 
     bool HasChanges();

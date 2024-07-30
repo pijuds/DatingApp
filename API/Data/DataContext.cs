@@ -10,6 +10,7 @@ public class DataContext :IdentityDbContext<AppUser, AppRole, int,
         IdentityRoleClaim<int>, IdentityUserToken<int>>
 
 {
+    
     public DataContext(DbContextOptions options):base(options)
     {
         
@@ -23,6 +24,8 @@ public class DataContext :IdentityDbContext<AppUser, AppRole, int,
     public DbSet<Group> Groups{get;set;}
 
     public DbSet<Connection> Connections{get;set;}
+
+    public DbSet<Photo> Photos { get; set; }
 
     
 
@@ -67,6 +70,9 @@ public class DataContext :IdentityDbContext<AppUser, AppRole, int,
             .HasOne(u => u.Sender)
             .WithMany(m => m.MessagesSent)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Photo>().HasQueryFilter(p => p.IsApproved);
+        
 
        
     }
