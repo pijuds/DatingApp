@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../_models/user';
 import { Photo } from '../_models/Photo';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -9,7 +10,9 @@ import { Photo } from '../_models/Photo';
 })
 export class AdminService {
 
-  baseUrl="https://localhost:5001/api/";
+  //baseUrl="https://localhost:5001/api/";
+
+  baseUrl=environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

@@ -10,8 +10,8 @@ import { PresenceService } from './presence.service';
 })
 export class AccountService {
 
-  baseUrl="https://localhost:5001/api/";
-  //baseUrl=environment.apiUrl;
+  //baseUrl="https://localhost:5001/api/";
+  baseUrl=environment.apiUrl;
   private currentUserSource=new BehaviorSubject<User | null>(null);
   currentUser$=this.currentUserSource.asObservable();
   //private presenceService=inject(PresenceService);

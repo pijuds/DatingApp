@@ -7,14 +7,17 @@ import { BehaviorSubject, take } from 'rxjs';
 import { User } from '../_models/user';
 import { ToastrService } from 'ngx-toastr';
 import { Group } from '../_models/group';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
+baseUrl=environment.apiUrl;
+hubUrl=environment.hubUrl;
 
-  baseUrl="https://localhost:5001/api/";
-  hubUrl = 'https://localhost:5001/hubs/';
+  //baseUrl="https://localhost:5001/api/";
+  //hubUrl = 'https://localhost:5001/hubs/';
   private hubConnection?: HubConnection;
   private toastr = inject(ToastrService);
   private messageThreadSouce = new BehaviorSubject<Message[]>([]);

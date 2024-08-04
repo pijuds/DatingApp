@@ -2,16 +2,12 @@ namespace API.Extensions;
 
 public static class DatetimeExtension
 {
-    public static int CalculateAge( this DateOnly dob)
+    public static int CalculateAge(this DateTime dateOfBirth)
     {
-        var today=DateOnly.FromDateTime(DateTime.UtcNow);
-
-        var age=today.Year-dob.Year;
-
-        if(dob >today.AddYears(-age)) age--;
-
+        var today = DateTime.Today;
+        int age = today.Year - dateOfBirth.Year;
+        if (dateOfBirth.Date > today.AddYears(-age)) age--;
         return age;
-
     }
 
 }

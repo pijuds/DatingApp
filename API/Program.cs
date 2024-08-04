@@ -22,8 +22,12 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
-builder.Services.AddDbContext<DataContext>(opt=>{
-  opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+//builder.Services.AddDbContext<DataContext>(opt=>{
+  //opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+//});
+
+builder.Services.AddDbContext<DataContext>(opt => {
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddCors(options =>
@@ -47,10 +51,13 @@ app.UseHttpsRedirection();
 //app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.UseStaticFiles();
+app.UseDefaultFiles();
 
+app.MapControllers();
 app.MapHub<PresenceHub>("/hubs/presence");
 app.MapHub<MessageHub>("/hubs/message");
+app.MapFallbackToController("Index", "Fallback");
 
 using var scope=app.Services.CreateScope();
 var services=scope.ServiceProvider;
@@ -61,7 +68,7 @@ try
    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
    await context.Database.MigrateAsync(); 
-   await context.Database.ExecuteSqlRawAsync("DELETE FROM [CONNECTIONS]");  
+   await Seed.ClearConnectios(context); 
     
   await Seed.SeedUser(userManager,roleManager);
 }

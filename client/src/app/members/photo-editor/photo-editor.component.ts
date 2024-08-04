@@ -17,7 +17,7 @@ export class PhotoEditorComponent implements OnInit {
   @Input() member:Member | undefined;
   uploader: FileUploader | undefined;
   hasBaseDropzoneOver = false;
-  baseUrl = "https://localhost:5001/api/";
+  baseUrl = environment.apiUrl;
   user: User | undefined;
 
   constructor(private account:AccountService,private memberservice:MembersService){

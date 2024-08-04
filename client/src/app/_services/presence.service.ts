@@ -4,13 +4,15 @@ import { ToastrService } from 'ngx-toastr';
 import { User } from '../_models/user';
 import { BehaviorSubject, take } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PresenceService {
 
-  hubUrl = 'https://localhost:5001/hubs/';
+  //hubUrl = 'https://localhost:5001/hubs/';
+  hubsUrl=environment.hubUrl;
   private hubConnection?: HubConnection;
  
   private toastr = inject(ToastrService);
@@ -21,7 +23,7 @@ export class PresenceService {
 
   createHubConnection(user: User) {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl + 'presence', {
+      .withUrl(this.hubsUrl + 'presence', {
         accessTokenFactory: () => user.token,
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets
